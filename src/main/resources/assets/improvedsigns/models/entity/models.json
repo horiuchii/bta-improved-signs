@@ -1,0 +1,11 @@
+{
+    "model_paths": [
+        "/assets/improvedsigns/models/entity/sign/sign.geo.json"
+    ],
+    "renderers": {
+        "minecraft:sign": {
+          "hanging":"geometry.sign.hanging",
+          "wall_hanging":"geometry.sign.wall.hanging"
+        }
+    }
+}

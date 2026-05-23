@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "horiuchi.improvedsigns.mixin",
+  "compatibilityLevel": "JAVA_${java}",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "BlockLogicFenceMixin",
+    "BlockLogicSignMixin",
+    "ItemDyeMixin",
+    "ItemPaintBrushMixin",
+    "ItemSignMixin",
+    "ItemSignPaintedMixin",
+    "TileEntitySignMixin"
+  ],
+  "client": [
+    "ScreenSignEditorMixin",
+    "TileEntityRendererSignMixin"
+  ]
+}

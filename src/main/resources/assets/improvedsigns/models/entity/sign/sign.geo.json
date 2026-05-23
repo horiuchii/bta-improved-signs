@@ -1,0 +1,47 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.sign.hanging",
+				"texture_width": 64,
+				"texture_height": 32,
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 4,
+				"visible_bounds_offset": [0, 1, 0]
+			},
+			"bones": [
+				{
+					"name": "sign",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-9, 10, -1], "size": [2, 14, 2], "uv": [0, 14]},
+						{"origin": [7, 10, -1], "size": [2, 14, 2], "uv": [0, 14]},
+						{"origin": [-12, -2, -1], "size": [24, 12, 2], "uv": [0, 0]}
+					]
+				}
+			]
+		},
+		{
+			"description": {
+				"identifier": "geometry.sign.wall.hanging",
+				"texture_width": 64,
+				"texture_height": 32,
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 4,
+				"visible_bounds_offset": [0, 1, 0]
+			},
+			"bones": [
+				{
+					"name": "sign",
+					"pivot": [0, 9, 0],
+					"cubes": [
+						{"origin": [19, 22, -1], "size": [2, 14, 2], "pivot": [12, 12, 0], "rotation": [0, 0, -90], "uv": [0, 14]},
+						{"origin": [33, 26, -1], "size": [2, 10, 2], "pivot": [26, 12, 0], "rotation": [0, 0, -90], "uv": [0, 14]},
+						{"origin": [-12, 7, -1], "size": [24, 12, 2], "uv": [0, 0]}
+					]
+				}
+			]
+		}
+	]
+}
