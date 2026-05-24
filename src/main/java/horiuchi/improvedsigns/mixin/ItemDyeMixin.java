@@ -32,10 +32,21 @@ abstract class ItemDyeMixin {
 
 		TileEntitySign signEntity = (TileEntitySign) world.getTileEntity(blockPos);
 
-		if(signEntity == null || !ImprovedSignsUtil.shouldEditBack(signEntity, (PlayerLocal) player))
+		if(signEntity == null)
 			return;
 
 		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) signEntity;
+		boolean editingBack = ImprovedSignsUtil.shouldEditBack(signEntity, (PlayerLocal) player);
+
+		if ((!editingBack && signEntity.isLocked()) || (editingBack && i.improvedsigns$isLockedBack())) {
+			cir.cancel();
+			cir.setReturnValue(false);
+			return;
+		}
+
+		if (!editingBack)
+			return;
+
 		if (DyeColor.WHITE.itemMeta - selfStack.getMetadata() == i.improvedsigns$getColorBack().id) {
 			cir.cancel();
 			cir.setReturnValue(false);

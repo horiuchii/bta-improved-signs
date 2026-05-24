@@ -37,13 +37,24 @@ abstract class ItemPaintBrushMixin {
 		if(!Block.hasLogicClass(block, BlockLogicSign.class))
 			return;
 
+		if (player == null || !player.isSneaking())
+			return;
+
 		TileEntitySign signEntity = (TileEntitySign) world.getTileEntity(blockPos);
 
-		if(signEntity == null || !ImprovedSignsUtil.shouldEditBack(signEntity, (PlayerLocal) player))
+		if(signEntity == null)
 			return;
 
 		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) signEntity;
-		if (player == null || !player.isSneaking())
+		boolean editingBack = ImprovedSignsUtil.shouldEditBack(signEntity, (PlayerLocal) player);
+
+		if ((!editingBack && signEntity.isLocked()) || (editingBack && i.improvedsigns$isLockedBack())) {
+			cir.cancel();
+			cir.setReturnValue(false);
+			return;
+		}
+
+		if (!editingBack)
 			return;
 
 		DyeColor color = getColor(selfStack);
