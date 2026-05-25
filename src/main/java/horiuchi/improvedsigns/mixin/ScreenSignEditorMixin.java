@@ -43,6 +43,19 @@ public abstract class ScreenSignEditorMixin extends Screen {
 		i.improvedsigns$setBackBeingEdited(this.editingBack);
 	}
 
+	// For some reason, unpainted post signs offset the screen which puts the done button offscreen
+	@ModifyExpressionValue(
+		method = "init()V",
+		at = @At(
+			value = "FIELD",
+			target = "Lnet/minecraft/client/gui/ScreenSignEditor;yOffset:I",
+			opcode = Opcodes.GETFIELD
+		)
+	)
+	private int replaceYOffset(int original) {
+		return 0;
+	}
+
 	@ModifyExpressionValue(
 		method = "keyPressed(CIII)V",
 		at = @At(
