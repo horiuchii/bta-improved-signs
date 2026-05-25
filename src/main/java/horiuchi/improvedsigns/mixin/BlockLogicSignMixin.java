@@ -123,19 +123,34 @@ public abstract class BlockLogicSignMixin extends BlockLogic implements IPaintab
 			return;
 		}
 
-		if (!ImprovedSignsUtil.shouldEditBack(signEntity, (PlayerLocal) player)) {
+		ItemStack heldItem = player.getHeldItem();
+
+		boolean editingBack = ImprovedSignsUtil.shouldEditBack(signEntity, (PlayerLocal) player);
+		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) signEntity;
+
+		// If the side we're editing is locked, attempt to place an item in the sign
+		if ((!editingBack && signEntity.isLocked()) || (editingBack && i.improvedsigns$isLockedBack())) {
+			boolean flag = i.improvedsigns$setItem(player, heldItem, editingBack);
+			world.notifyBlocksOfNeighborChange(tilePos, this.block);
+			if (heldItem != null && heldItem.stackSize <= 0) {
+				player.inventory.setItem(player.inventory.getCurrentSlot(), (ItemStack)null);
+			}
+
+			cir.cancel();
+			cir.setReturnValue(flag);
 			return;
 		}
 
-		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) signEntity;
+		// We're editing the back from here on out
+		if (!editingBack) {
+			return;
+		}
 
 		if (i.improvedsigns$isLockedBack()) {
 			cir.cancel();
 			cir.setReturnValue(false);
 			return;
 		}
-
-		ItemStack heldItem = player.getHeldItem();
 
 		if (heldItem != null && heldItem.itemID == Items.DUST_GLOWSTONE.id && !i.improvedsigns$isGlowingBack() && heldItem.consumeItem(player)) {
 			i.improvedsigns$setGlowingBack(true);

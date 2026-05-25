@@ -3,8 +3,7 @@ package horiuchi.improvedsigns.mixin;
 import horiuchi.improvedsigns.ImprovedSignsUtil;
 import horiuchi.improvedsigns.TileEntitySignBackVariablesInterface;
 import net.minecraft.client.entity.player.PlayerLocal;
-import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockLogicSign;
+import net.minecraft.core.block.*;
 import net.minecraft.core.block.entity.TileEntitySign;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemPaintBrush;
@@ -49,6 +48,33 @@ abstract class ItemPaintBrushMixin {
 		boolean editingBack = ImprovedSignsUtil.shouldEditBack(signEntity, (PlayerLocal) player);
 
 		if ((!editingBack && signEntity.isLocked()) || (editingBack && i.improvedsigns$isLockedBack())) {
+			// If the sign is locked, allow us to still paint it normally instead of putting the item in the sign
+			if(player.isSneaking()) {
+				BlockLogic logic = Block.getLogicClass(block);
+				if (logic instanceof IPaintable paintable) {
+					if (!paintable.canBePainted()) {
+						cir.cancel();
+						cir.setReturnValue(false);
+						return;
+					}
+
+					DyeColor color = getColor(selfStack);
+					if (color != null) {
+						if (paintable instanceof IPainted && ((IPainted)paintable).getColor(world, blockPos) == color) {
+							cir.cancel();
+							cir.setReturnValue(false);
+							return;
+						}
+
+						paintable.setColor(world, blockPos, color);
+						this.consumePaint(selfStack, player);
+						cir.cancel();
+						cir.setReturnValue(true);
+						return;
+					}
+				}
+			}
+
 			cir.cancel();
 			cir.setReturnValue(false);
 			return;
