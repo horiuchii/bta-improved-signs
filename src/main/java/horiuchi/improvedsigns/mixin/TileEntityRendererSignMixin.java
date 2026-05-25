@@ -8,6 +8,8 @@ import horiuchi.improvedsigns.TileEntitySignBackVariablesInterface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.option.GameSettings;
 import net.minecraft.client.option.enums.TextOutlineQuality;
+import net.minecraft.client.render.block.model.BlockModel;
+import net.minecraft.client.render.block.model.BlockModelDispatcher;
 import net.minecraft.client.render.font.FontRendererDefault;
 import net.minecraft.client.render.font.SF;
 import net.minecraft.client.render.item.model.ItemModel;
@@ -26,6 +28,7 @@ import net.minecraft.core.block.*;
 import net.minecraft.core.block.entity.TileEntitySign;
 import net.minecraft.core.enums.EnumSignPicture;
 import net.minecraft.core.item.ItemStack;
+import net.minecraft.core.item.block.ItemBlock;
 import net.minecraft.core.util.helper.Color;
 import net.minecraft.core.util.helper.DyeColor;
 import net.minecraft.core.util.helper.MathHelper;
@@ -221,7 +224,13 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 
 		Block<?> block = tileEntity.getBlock();
 		ItemModel itemModelDispatch = ItemModelDispatcher.getInstance().getDispatch(item);
-		boolean isBlock = itemModelDispatch instanceof ItemModelBlock;
+		boolean isBlock = false;
+		// Some blocks render as items in the inventory, and must be accounted for
+		if (itemModelDispatch instanceof ItemModelBlock) {
+			Block<?> itemBlock = (((ItemBlock<?>)item.getItem()).getBlock());
+			// Hack for buttons rendering weird
+			isBlock = !(itemBlock.getLogic() instanceof BlockLogicButton) && BlockModelDispatcher.getInstance().getDispatch(itemBlock).shouldItemRender3d();
+		}
 		byte light = Minecraft.getMinecraft().currentWorld.getLightIndex(new TilePos(tileEntity.tilePos.x, tileEntity.tilePos.y, tileEntity.tilePos.z), 0);
 		float offsetBaseY = isBlock ? -0.540F : -0.4585F;
 		Vector3f offset = new Vector3f();
