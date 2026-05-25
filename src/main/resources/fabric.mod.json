@@ -3,7 +3,7 @@
 	"id": "improvedsigns",
 	"version": "${version}",
 	"name": "Improved Signs",
-	"description": "Allows writing text on both sides of the sign and adds new hanging variants.",
+	"description": "Adds two new hanging sign variants, allows editing the back side of the sign and allows you to attach blocks and items to locked signs.",
 	"authors": [
 		"Horiuchi"
 	],
