@@ -55,10 +55,7 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 	private @NotNull StringBuilder builder;
 	@Shadow
 	@Final
-	private String[] signColorTextures;
-	@Unique
-	@Final
-	private static TileEntityRendererSign.BufferedTextMeshRenderer textMeshRenderer_back = new TileEntityRendererSign.BufferedTextMeshRenderer();
+	public static TileEntityRendererSign.BufferedTextMeshRenderer textMeshRenderer;
 
 	@Shadow
 	private static void drawTexturedModalRect(double width, double height, boolean blended, @NotNull IconCoordinate coordinate) {}
@@ -128,18 +125,6 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 			GLRenderer.modelM4f().translate(0.0F, 0.0F, -0.45833334F);
 		}
 		GLRenderer.pushFrame();
-		GLRenderer.modelM4f().scale(0.041666668F, 0.041666668F, -0.041666668F);
-		if (Block.hasLogicClass(block, BlockLogicSignPainted.class)) {
-			DyeColor c = ((IPainted) block.getLogic()).fromMetadata(meta);
-			this.bindTexture(this.signColorTextures[c.blockMeta]);
-		} else {
-			this.bindTexture("/assets/minecraft/textures/entity/sign.png");
-		}
-
-		GLRenderer.disableState(State.BLEND);
-		GLRenderer.enableState(State.BLEND);
-		GLRenderer.popFrame();
-		GLRenderer.pushFrame();
 		GLRenderer.modelM4f().translate(0.0F, height * 0.041666668F, -0.04375F);
 		GLRenderer.modelM4f().rotateY(Math.toRadians(180.0F));
 		GLRenderer.setDepthMask(false);
@@ -199,9 +184,9 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 		int _y = -backText.length * 5;
 		if (i.improvedsigns$isGlowingBack() && GameSettings.TEXT_OUTLINE_QUALITY.value == TextOutlineQuality.FANCY) {
 			GLRenderer.setLightmapCoord2i(15, 15);
-			textMeshRenderer_back.render(this.fontRenderer, line1, line2, line3, line4, 0, _y, SF.setOutlined(SF.setColor(0L, color)));
+			textMeshRenderer.render(this.fontRenderer, line1, line2, line3, line4, 0, _y, SF.setOutlined(SF.setColor(0L, color)));
 		} else {
-			textMeshRenderer_back.render(this.fontRenderer, line1, line2, line3, line4, 0, _y, SF.setColor(0L, color));
+			textMeshRenderer.render(this.fontRenderer, line1, line2, line3, line4, 0, _y, SF.setColor(0L, color));
 		}
 
 		GLRenderer.popFrame();
@@ -257,14 +242,6 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 		//TODO: option for glowing signs to have their item fullbright
 		itemModelDispatch.renderItemEntity(t, item, true, 1, 0, isBlock ? 180.0F : 0.0F, light, partialTick);
 		GLRenderer.popFrame();
-	}
-
-	@Inject(
-		method = "tick()V",
-		at = @At("TAIL")
-	)
-	private void tickBackTextRenderMesh(CallbackInfo ci) {
-		textMeshRenderer_back.tick();
 	}
 
 	@Inject(
