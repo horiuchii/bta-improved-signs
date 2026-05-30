@@ -5,7 +5,8 @@
     "renderers": {
         "minecraft:sign": {
           "hanging":"geometry.sign.hanging",
-          "wall_hanging":"geometry.sign.wall.hanging"
+          "wall_hanging":"geometry.sign.wall.hanging",
+          "map":"geometry.sign.map"
         }
     }
 }

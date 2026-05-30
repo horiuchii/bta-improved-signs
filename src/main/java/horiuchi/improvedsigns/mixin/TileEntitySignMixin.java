@@ -107,9 +107,9 @@ public abstract class TileEntitySignMixin extends TileEntity implements TileEnti
 		if (stack != null) {
 			stack.consumeItem(player);
 			if (editingBack)
-				this.itemBack = new ItemStack(stack.getItem(), 1, stack.getMetadata(), stack.getData());
+				this.itemBack = new ItemStack(stack.getItem(), 1, stack.getMetadata(), new CompoundTag(stack.getData()));
 			else
-				this.itemFront = new ItemStack(stack.getItem(), 1, stack.getMetadata(), stack.getData());
+				this.itemFront = new ItemStack(stack.getItem(), 1, stack.getMetadata(), new CompoundTag(stack.getData()));
 			this.setChanged();
 			return true;
 		} else {
