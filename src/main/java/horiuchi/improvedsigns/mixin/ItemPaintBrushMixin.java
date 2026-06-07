@@ -2,7 +2,6 @@ package horiuchi.improvedsigns.mixin;
 
 import horiuchi.improvedsigns.ImprovedSignsUtil;
 import horiuchi.improvedsigns.TileEntitySignBackVariablesInterface;
-import net.minecraft.client.entity.player.PlayerLocal;
 import net.minecraft.core.block.*;
 import net.minecraft.core.block.entity.TileEntitySign;
 import net.minecraft.core.entity.player.Player;
@@ -45,7 +44,7 @@ abstract class ItemPaintBrushMixin {
 			return;
 
 		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) signEntity;
-		boolean editingBack = ImprovedSignsUtil.shouldEditBack(signEntity, (PlayerLocal) player);
+		boolean editingBack = ImprovedSignsUtil.shouldEditBack(signEntity, player);
 
 		if ((!editingBack && signEntity.isLocked()) || (editingBack && i.improvedsigns$isLockedBack())) {
 			// If the sign is locked, allow us to still paint it normally instead of putting the item in the sign
@@ -94,6 +93,5 @@ abstract class ItemPaintBrushMixin {
 
 		cir.cancel();
 		cir.setReturnValue(false);
-		return;
 	}
 }

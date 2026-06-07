@@ -3,26 +3,26 @@ package horiuchi.improvedsigns.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import horiuchi.improvedsigns.ImprovedSignsBlocks;
 import horiuchi.improvedsigns.ImprovedSignsUtil;
+import horiuchi.improvedsigns.PacketImprovedSignUpdate;
 import horiuchi.improvedsigns.TileEntitySignBackVariablesInterface;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.ScreenSignEditor;
+import net.minecraft.client.net.handler.PacketHandlerClient;
 import net.minecraft.client.render.renderer.GLRenderer;
 import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockLogicSign;
 import net.minecraft.core.block.entity.TileEntitySign;
 import net.minecraft.core.enums.EnumSignPicture;
-import net.minecraft.core.util.helper.DyeColor;
+import net.minecraft.core.net.packet.Packet;
+import net.minecraft.core.net.packet.PacketSignUpdate;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector2d;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static horiuchi.improvedsigns.ImprovedSignsMod.LOGGER;
+import java.util.Objects;
 
 @Mixin(ScreenSignEditor.class)
 public abstract class ScreenSignEditorMixin extends Screen {
@@ -41,6 +41,21 @@ public abstract class ScreenSignEditorMixin extends Screen {
 		this.editingBack = ImprovedSignsUtil.shouldEditBack(entitySign, this.mc.thePlayer);
 		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) entitySign;
 		i.improvedsigns$setBackBeingEdited(this.editingBack);
+	}
+
+	@Redirect(method = "removed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/net/handler/PacketHandlerClient;addToSendQueue(Lnet/minecraft/core/net/packet/Packet;)V"))
+	private void a(PacketHandlerClient instance, Packet packet) {
+		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) entitySign;
+		Objects.requireNonNull(this.mc.getSendQueue()).addToSendQueue(new PacketImprovedSignUpdate(
+			this.entitySign.tilePos.x,
+			this.entitySign.tilePos.y,
+			this.entitySign.tilePos.z,
+			this.entitySign.signText,
+			this.entitySign.getPicture().getId(),
+			this.entitySign.getColor().id,
+			i.improvedsigns$getBackText(),
+			i.improvedsigns$getPictureBack().getId(),
+			i.improvedsigns$getColorBack().id));
 	}
 
 	// For some reason, unpainted post signs offset the screen which puts the done button offscreen

@@ -12,10 +12,14 @@
     "ItemPaintBrushMixin",
     "ItemSignMixin",
     "ItemSignPaintedMixin",
+    "PacketMixin",
     "TileEntitySignMixin"
   ],
   "client": [
     "ScreenSignEditorMixin",
     "TileEntityRendererSignMixin"
+  ],
+  "server": [
+    "PacketHandlerServerMixin"
   ]
 }

@@ -3,7 +3,6 @@ package horiuchi.improvedsigns.mixin;
 import horiuchi.improvedsigns.ImprovedSignsBlocks;
 import horiuchi.improvedsigns.ImprovedSignsUtil;
 import horiuchi.improvedsigns.TileEntitySignBackVariablesInterface;
-import net.minecraft.client.entity.player.PlayerLocal;
 import net.minecraft.core.achievement.Achievements;
 import net.minecraft.core.block.*;
 import net.minecraft.core.block.entity.TileEntitySign;
@@ -125,7 +124,7 @@ public abstract class BlockLogicSignMixin extends BlockLogic implements IPaintab
 
 		ItemStack heldItem = player.getHeldItem();
 
-		boolean editingBack = ImprovedSignsUtil.shouldEditBack(signEntity, (PlayerLocal) player);
+		boolean editingBack = ImprovedSignsUtil.shouldEditBack(signEntity, player);
 		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) signEntity;
 
 		// If the side we're editing is locked, attempt to place an item in the sign
@@ -133,7 +132,7 @@ public abstract class BlockLogicSignMixin extends BlockLogic implements IPaintab
 			boolean flag = i.improvedsigns$setItem(player, heldItem, editingBack);
 			world.notifyBlocksOfNeighborChange(tilePos, this.block);
 			if (heldItem != null && heldItem.stackSize <= 0) {
-				player.inventory.setItem(player.inventory.getCurrentSlot(), (ItemStack)null);
+				player.inventory.setItem(player.inventory.getCurrentSlot(), null);
 			}
 
 			cir.cancel();
@@ -186,6 +185,5 @@ public abstract class BlockLogicSignMixin extends BlockLogic implements IPaintab
 
 		cir.cancel();
 		cir.setReturnValue(false);
-		return;
 	}
 }

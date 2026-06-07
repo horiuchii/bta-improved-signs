@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.UUID;
 
@@ -72,8 +71,8 @@ public abstract class TileEntitySignMixin extends TileEntity implements TileEnti
 	private void readBackData(@NotNull CompoundTag compoundTag, CallbackInfo ci) {
 		for(int i = 0; i < 4; ++i) {
 			this.signText_back[i] = compoundTag.getString("Text" + (i + 1) + "Back");
-			if (this.signText_back[i].length() > 15) {
-				this.signText_back[i] = this.signText_back[i].substring(0, 15);
+			if (this.signText_back[i].length() > TileEntitySign.MAX_LINE_SIZE) {
+				this.signText_back[i] = this.signText_back[i].substring(0, TileEntitySign.MAX_LINE_SIZE);
 			}
 		}
 

@@ -2,10 +2,8 @@ package horiuchi.improvedsigns.mixin;
 
 import horiuchi.improvedsigns.ImprovedSignsUtil;
 import horiuchi.improvedsigns.TileEntitySignBackVariablesInterface;
-import net.minecraft.client.entity.player.PlayerLocal;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicSign;
-import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.entity.TileEntitySign;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemDye;
@@ -36,7 +34,7 @@ abstract class ItemDyeMixin {
 			return;
 
 		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) signEntity;
-		boolean editingBack = ImprovedSignsUtil.shouldEditBack(signEntity, (PlayerLocal) player);
+		boolean editingBack = ImprovedSignsUtil.shouldEditBack(signEntity, player);
 
 		if ((!editingBack && signEntity.isLocked()) || (editingBack && i.improvedsigns$isLockedBack())) {
 			cir.cancel();
@@ -60,6 +58,5 @@ abstract class ItemDyeMixin {
 
 		cir.cancel();
 		cir.setReturnValue(true);
-		return;
 	}
 }

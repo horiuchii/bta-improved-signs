@@ -1,17 +1,13 @@
 package horiuchi.improvedsigns;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.PlayerLocal;
 import net.minecraft.core.block.BlockLogicSign;
 import net.minecraft.core.block.entity.TileEntitySign;
+import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.util.helper.DyeColor;
 import org.joml.Vector2d;
 
-@Environment(EnvType.CLIENT)
 public class ImprovedSignsUtil {
-	public static boolean shouldEditBack(TileEntitySign entitySign, PlayerLocal player) {
+	public static boolean shouldEditBack(TileEntitySign entitySign, Player player) {
 		int meta = entitySign.getBlockMeta() & DyeColor.MASK_COLOR;
 		float angle;
 		BlockLogicSign sign = (BlockLogicSign)entitySign.getBlock().getLogic();
