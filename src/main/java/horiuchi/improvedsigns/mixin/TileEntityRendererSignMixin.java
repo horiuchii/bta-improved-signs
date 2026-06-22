@@ -1,16 +1,11 @@
 package horiuchi.improvedsigns.mixin;
 
-import com.mojang.nbt.tags.CompoundTag;
 import horiuchi.improvedsigns.ImprovedSignsBlocks;
 import horiuchi.improvedsigns.TileEntitySignBackVariablesInterface;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.option.GameSettings;
 import net.minecraft.client.option.enums.TextOutlineQuality;
-import net.minecraft.client.render.FlagRenderer;
 import net.minecraft.client.render.MapItemRenderer;
-import net.minecraft.client.render.TextureManager;
 import net.minecraft.client.render.block.model.BlockModelDispatcher;
 import net.minecraft.client.render.font.FontRendererDefault;
 import net.minecraft.client.render.font.SF;
@@ -47,9 +42,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(TileEntityRendererSign.class)
 public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<TileEntitySign> {
 
@@ -84,7 +76,7 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 
 		Block<?> block = tileEntity.getBlock();
 		BlockLogicSign signLogic = (BlockLogicSign) block.getLogic();
-		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) tileEntity;
+		TileEntitySignBackVariablesInterface signInterface = (TileEntitySignBackVariablesInterface) tileEntity;
 
 		if (this.fontRenderer == null) {
 			this.fontRenderer = new FontRendererDefault();
@@ -125,7 +117,7 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 			}
 		}
 		for (int back = 0; back < 2; back++) {
-			ItemStack itemStack = i.improvedsigns$getItem(back == 1);
+			ItemStack itemStack = signInterface.improvedsigns$getItem(back == 1);
 
 			if (itemStack != null) {
 				Item itemStackItem = itemStack.getItem();
@@ -162,7 +154,7 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 				GLRenderer.modelM4f().rotateY(Math.toRadians(180.0F));
 			GLRenderer.setDepthMask(false);
 			GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			EnumSignPicture picture = back == 1 ? i.improvedsigns$getPictureBack() : tileEntity.getPicture();
+			EnumSignPicture picture = back == 1 ? signInterface.improvedsigns$getPictureBack() : tileEntity.getPicture();
 			if (picture != null) {
 				if (picture.isBlended()) {
 					GLRenderer.enableState(State.BLEND);
@@ -181,7 +173,7 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 		// Item
 		for (int back = 0; back < 2; back++) {
 			GLRenderer.pushFrame();
-			ItemStack itemStack = i.improvedsigns$getItem(back == 1);
+			ItemStack itemStack = signInterface.improvedsigns$getItem(back == 1);
 
 			if (itemStack != null) {
 				Item itemStackItem = itemStack.getItem();
@@ -190,33 +182,29 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 				if (back == 1)
 					GLRenderer.modelM4f().rotateY(Math.toRadians(180.0F));
 				byte light = this.mc.currentWorld.getLightIndex(new TilePos(tileEntity.tilePos.x, tileEntity.tilePos.y, tileEntity.tilePos.z), 0);
-				boolean renderedExtra = false;
 				// Render map
-				if (itemStackItem instanceof ItemMap) {
-					if (ItemMap.hasInitialized(itemStack)) {
-						ItemMapSavedData mapData = Items.MAP.getOrCreateSavedData(itemStack, this.mc.currentWorld);
-						if (mapData != null) {
-							float mapRenderScale = 1.0F/128.0F;
-							GLRenderer.modelM4f().translate(-0.5F,  0.5875F, 0.0F);
-							GLRenderer.modelM4f().scale(mapRenderScale, -mapRenderScale, mapRenderScale);
-							this.renderMapInstance.renderMap(t, mapData);
-							renderedExtra = true;
-						}
+				if (itemStackItem instanceof ItemMap && ItemMap.hasInitialized(itemStack)) {
+					ItemMapSavedData mapData = Items.MAP.getOrCreateSavedData(itemStack, this.mc.currentWorld);
+					if (mapData != null) {
+						float mapRenderScale = 1.0F/128.0F;
+						GLRenderer.modelM4f().translate(-0.5F,  0.5875F, 0.0F);
+						GLRenderer.modelM4f().scale(mapRenderScale, -mapRenderScale, mapRenderScale);
+						this.renderMapInstance.renderMap(t, mapData);
 					}
 				}
 				// Render item or block
-				if (!renderedExtra) {
-					if (itemModelDispatch instanceof ItemModelBlock) {
-						Block<?> itemBlock = (((ItemBlock<?>)itemStackItem).getBlock());
-						if (BlockModelDispatcher.getInstance().getDispatch(itemBlock).shouldItemRender3d()) {
-							GLRenderer.modelM4f().scale(2.0F, 2.0F, 0.0001F);
-							GLRenderer.modelM4f().translate(0.0F, -0.125F, 0.0F);
-							GLRenderer.modelM4f().rotateY(Math.toRadians(180.0F));
-						}
+				else {
+					if (itemModelDispatch instanceof ItemModelBlock && itemStackItem instanceof ItemBlock<?> itemBlock &&
+						BlockModelDispatcher.getInstance().getDispatch(itemBlock.getBlock()).shouldItemRender3d()) {
+						GLRenderer.modelM4f().scale(0.5F, 0.5F, 0.001F);
+						GLRenderer.modelM4f().translate(0.0F,  0.25F, 0.0F);
+						GLRenderer.enableState(State.BLEND);
+						itemModelDispatch.render(t, null, itemStack, "gui", false, 1, light, partialTick, false);
+						GLRenderer.disableState(State.BLEND);
 					}
-					GLRenderer.enableState(State.BLEND);
-					itemModelDispatch.render(t, null, itemStack, "ground", false, 1, light, partialTick, false);
-					GLRenderer.disableState(State.BLEND);
+					else {
+						itemModelDispatch.render(t, null, itemStack, "ground", false, 1, light, partialTick, false);
+					}
 				}
 			}
 
@@ -226,7 +214,7 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 		// Text
 		for (int back = 0; back < 2; back++) {
 			float lightOffset = 0.0F;
-			boolean glowing = back == 1 ? i.improvedsigns$isGlowingBack() : tileEntity.isGlowing();
+			boolean glowing = back == 1 ? signInterface.improvedsigns$isGlowingBack() : tileEntity.isGlowing();
 			if (glowing) {
 				lightOffset = 96.0F;
 				GLRenderer.setLightmapCoord2i(15, 15);
@@ -239,12 +227,12 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 			float scale2 = 0.011111113F;
 			GLRenderer.modelM4f().scale(scale2, -scale2, scale2);
 			GLRenderer.setDepthMask(false);
-			int color = Colors.allSignColors[(back == 1 ? i.improvedsigns$getColorBack() : tileEntity.getColor()).id].getARGB();
+			int color = Colors.allSignColors[(back == 1 ? signInterface.improvedsigns$getColorBack() : tileEntity.getColor()).id].getARGB();
 			int r = (int)MathHelper.clamp((float)Color.redFromInt(color) + lightOffset, 0.0F, 255.0F);
 			int g = (int)MathHelper.clamp((float)Color.greenFromInt(color) + lightOffset, 0.0F, 255.0F);
 			int b = (int)MathHelper.clamp((float)Color.blueFromInt(color) + lightOffset, 0.0F, 255.0F);
 			color = Color.intToIntARGB(0, r, g, b);
-			String[] signText = (back == 1 ? i.improvedsigns$getBackText() : tileEntity.signText);
+			String[] signText = (back == 1 ? signInterface.improvedsigns$getBackText() : tileEntity.signText);
 			CharSequence line1 = signText[0];
 			CharSequence line2 = signText[1];
 			CharSequence line3 = signText[2];
