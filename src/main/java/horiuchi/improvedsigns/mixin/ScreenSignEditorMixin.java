@@ -44,7 +44,7 @@ public abstract class ScreenSignEditorMixin extends Screen {
 	}
 
 	@Redirect(method = "removed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/net/handler/PacketHandlerClient;addToSendQueue(Lnet/minecraft/core/net/packet/Packet;)V"))
-	private void a(PacketHandlerClient instance, Packet packet) {
+	private void replaceSignPacket(PacketHandlerClient instance, Packet packet) {
 		TileEntitySignBackVariablesInterface i = (TileEntitySignBackVariablesInterface) entitySign;
 		Objects.requireNonNull(this.mc.getSendQueue()).addToSendQueue(new PacketImprovedSignUpdate(
 			this.entitySign.tilePos.x,
@@ -56,19 +56,6 @@ public abstract class ScreenSignEditorMixin extends Screen {
 			i.improvedsigns$getBackText(),
 			i.improvedsigns$getPictureBack().getId(),
 			i.improvedsigns$getColorBack().id));
-	}
-
-	// For some reason, unpainted post signs offset the screen which puts the done button offscreen
-	@ModifyExpressionValue(
-		method = "init()V",
-		at = @At(
-			value = "FIELD",
-			target = "Lnet/minecraft/client/gui/ScreenSignEditor;yOffset:I",
-			opcode = Opcodes.GETFIELD
-		)
-	)
-	private int replaceYOffset(int original) {
-		return 0;
 	}
 
 	@ModifyExpressionValue(
