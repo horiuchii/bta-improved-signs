@@ -11,6 +11,7 @@ import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.enums.EnumDropCause;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.Items;
+import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.DyeColor;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
@@ -55,11 +56,11 @@ public abstract class BlockLogicSignMixin extends BlockLogic implements IPaintab
 		float thickness = 0.125F;
 		float offset = 0.45833334F;
 		AABBd bounds;
-		switch (source.getBlockData(tilePos) & DyeColor.MASK_COLOR) {
-			case 2 -> bounds = new AABBd(0.0F, bottom, offset, width, top, offset + thickness);
-			case 3 -> bounds = new AABBd(0.0F, bottom, 1.0F - (offset + thickness), width, top, 1.0F - offset);
-			case 4 -> bounds = new AABBd(offset, bottom, 0.0F, offset + thickness, top, width);
-			case 5 -> bounds = new AABBd(1.0F - (offset + thickness), bottom, 0.0F, 1.0F - offset, top, width);
+		switch (Direction.fromIdLenient(source.getBlockData(tilePos) & DyeColor.MASK_COLOR)) {
+			case NORTH -> bounds = new AABBd(0.0F, bottom, offset, width, top, offset + thickness);
+			case SOUTH -> bounds = new AABBd(0.0F, bottom, 1.0F - (offset + thickness), width, top, 1.0F - offset);
+			case WEST -> bounds = new AABBd(offset, bottom, 0.0F, offset + thickness, top, width);
+			case EAST -> bounds = new AABBd(1.0F - (offset + thickness), bottom, 0.0F, 1.0F - offset, top, width);
 
 			default -> bounds = new AABBd(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 		}

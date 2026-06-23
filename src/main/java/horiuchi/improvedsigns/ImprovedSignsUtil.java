@@ -3,23 +3,24 @@ package horiuchi.improvedsigns;
 import net.minecraft.core.block.BlockLogicSign;
 import net.minecraft.core.block.entity.TileEntitySign;
 import net.minecraft.core.entity.player.Player;
+import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.DyeColor;
 import org.joml.Vector2d;
 
 public class ImprovedSignsUtil {
 	public static boolean shouldEditBack(TileEntitySign entitySign, Player player) {
 		int meta = entitySign.getBlockMeta() & DyeColor.MASK_COLOR;
-		float angle;
+		float angle = 0.0F;
 		BlockLogicSign sign = (BlockLogicSign)entitySign.getBlock().getLogic();
 		if (sign.isFreeStanding) {
 			angle = (meta * 360.0F) / 16.0F;
 		}
 		else {
-			switch (meta) {
-				case 2 -> angle = 180.0F;
-				case 3 -> angle = 0.0F;
-				case 4 -> angle = 90.0F;
-				default -> angle = -90.0F;
+			switch (Direction.fromIdLenient(meta)) {
+				case NORTH -> angle = 180.0F;
+				case SOUTH -> angle = 0.0F;
+				case WEST -> angle = 90.0F;
+				case EAST -> angle = -90.0F;
 			}
 		}
 		Vector2d entityPos = new Vector2d(entitySign.tilePos.x + 0.5F, entitySign.tilePos.z + 0.5F);
