@@ -12,7 +12,6 @@
     "ItemPaintBrushMixin",
     "ItemSignMixin",
     "ItemSignPaintedMixin",
-    "PacketMixin",
     "TileEntitySignMixin"
   ],
   "client": [

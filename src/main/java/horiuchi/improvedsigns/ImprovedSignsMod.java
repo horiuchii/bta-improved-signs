@@ -6,6 +6,7 @@ import net.minecraft.client.render.tileentity.TileEntityRendererSign;
 import net.minecraft.core.block.entity.TileEntityDispatcher;
 import net.minecraft.core.block.entity.TileEntityFurnace;
 import net.minecraft.core.block.entity.TileEntitySign;
+import net.minecraft.core.net.packet.Packet;
 import net.minecraft.core.util.collection.NamespaceID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public class ImprovedSignsMod implements ModInitializer, GameStartEntrypoint, Re
 	public void beforeGameStart() {
 		ImprovedSignsBlocks.init();
 		TileEntityDispatcher.addMapping(TileEntitySign.class, NamespaceID.fromPool("improvedsigns", "sign"));
+		Packet.addMapping(150, false, true, PacketImprovedSignUpdate.class);
 	}
 
 	@Override
