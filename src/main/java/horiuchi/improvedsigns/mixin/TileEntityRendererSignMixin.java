@@ -99,6 +99,13 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
 		ci.cancel();
 
 		Block<?> block = tileEntity.getBlock();
+
+		if (block.id() != Blocks.SIGN_POST_PLANKS_OAK.id() && block.id() != Blocks.SIGN_POST_PLANKS_OAK_PAINTED.id() && block.id() != Blocks.SIGN_WALL_PLANKS_OAK.id()
+		&& block.id() != Blocks.SIGN_WALL_PLANKS_OAK_PAINTED.id() && block.id() != ImprovedSignsBlocks.SIGN_HANGING_PLANKS_OAK.id()
+			&& block.id() != ImprovedSignsBlocks.SIGN_HANGING_PLANKS_OAK_PAINTED.id() && block.id() != ImprovedSignsBlocks.SIGN_WALL_HANGING_PLANKS_OAK.id()
+		&& block.id() != ImprovedSignsBlocks.SIGN_WALL_HANGING_PLANKS_OAK_PAINTED.id())
+			return;
+
 		BlockLogicSign signLogic = (BlockLogicSign) block.getLogic();
 		TileEntitySignBackVariablesInterface signInterface = (TileEntitySignBackVariablesInterface) tileEntity;
 
